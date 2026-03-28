@@ -11,6 +11,8 @@
   --color-sub: #2d2d2d;
   --color-mute: #888880;
   --color-foreground: #1a1a1a;
+  --color-accent-soft: #fff0ec;
+  --color-event: #f59e0b;
 }
 
 body {
