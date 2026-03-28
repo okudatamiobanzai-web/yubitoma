@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #fafaf8;
+  --color-card: #ffffff;
+  --color-soft: #f2f2ed;
+  --color-border: #e8e8e2;
+  --color-primary: #e85d3a;
+  --color-primary-dark: #d14e2d;
+  --color-accent: #ff7a55;
+  --color-sub: #2d2d2d;
+  --color-mute: #888880;
+  --color-foreground: #1a1a1a;
+}
+
+body {
+  font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes pulse { 50% { opacity: .5; } }
+.animate-pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
