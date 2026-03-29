@@ -1,30 +1,100 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #fafaf8;
-  --color-card: #ffffff;
-  --color-soft: #f2f2ed;
-  --color-border: #e8e8e2;
-  --color-primary: #e85d3a;
-  --color-primary-dark: #d14e2d;
-  --color-accent: #ff7a55;
-  --color-sub: #2d2d2d;
-  --color-mute: #888880;
-  --color-foreground: #1a1a1a;
-  --color-accent-soft: #fff0ec;
-  --color-event: #f59e0b;
+  --background: #F7F4F0;
+  --foreground: #1E1C18;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* 指とま ブランドカラー（しるべ風アースカラー） */
+  --color-bg: #F7F4F0;
+  --color-soft: #EFEBE5;
+  --color-card: #FFFFFF;
+  --color-ink: #1E1C18;
+  --color-sub: #5A5650;
+  --color-mute: #9A9488;
+  --color-border: #DDD7CC;
+  /* アクセント：テラコッタオレンジ（温かみのあるコミュニティ感） */
+  --color-primary: #C5693B;
+  --color-primary-dark: #A8552E;
+  --color-primary-light: #E8C4AD;
+  --color-accent: #C5693B;
+  --color-accent-soft: #FBF0E8;
+  /* セマンティック */
+  --color-success: #5B8F5E;
+  --color-warning: #D4983E;
+  --color-danger: #C43E2E;
+  /* カテゴリ */
+  --color-nomikai: #5B8F5E;
+  --color-event: #4A7FA5;
+  --color-tane: #B8860B;
+  --color-project: #8B5CF6;
+  --font-sans: var(--font-noto-sans-jp);
+  --font-mono: var(--font-geist-mono);
 }
 
 body {
-  font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-  background: var(--color-bg);
-  color: var(--color-foreground);
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Noto Sans JP', 'Helvetica Neue', sans-serif;
 }
 
+/* ダークモード */
+[data-theme="dark"] {
+  --background: #1A1816;
+  --foreground: #E8E4DC;
+  --color-bg: #1A1816;
+  --color-soft: #262320;
+  --color-card: #2A2724;
+  --color-ink: #E8E4DC;
+  --color-sub: #B5AFA5;
+  --color-mute: #7A7468;
+  --color-border: #3A3632;
+  --color-primary: #D4854F;
+  --color-primary-dark: #C5693B;
+  --color-primary-light: #4A3828;
+  --color-accent: #D4854F;
+  --color-accent-soft: #2E2218;
+  --color-success: #6DAF70;
+  --color-warning: #E4A84E;
+  --color-danger: #D4584A;
+  --color-nomikai: #6DAF70;
+  --color-event: #5A9FBF;
+  --color-tane: #DAA520;
+  --color-project: #A78BFA;
+}
+
+/* Grain overlay（しるべ風） */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  z-index: 9999;
+}
+
+/* Scroll hide */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-@keyframes pulse { 50% { opacity: .5; } }
-.animate-pulse { animation: pulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

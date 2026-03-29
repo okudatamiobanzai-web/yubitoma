@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f3460"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg3)"/>
+  <!-- grid pattern -->
+  <line x1="0" y1="0" x2="800" y2="450" stroke="#00d084" opacity="0.05" stroke-width="1"/>
+  <line x1="200" y1="0" x2="800" y2="300" stroke="#00d084" opacity="0.05" stroke-width="1"/>
+  <line x1="0" y1="150" x2="800" y2="450" stroke="#00d084" opacity="0.05" stroke-width="1"/>
+  <line x1="400" y1="0" x2="800" y2="200" stroke="#00d084" opacity="0.05" stroke-width="1"/>
+  <!-- decorative -->
+  <rect x="600" y="40" width="160" height="160" rx="80" fill="none" stroke="#00d084" opacity="0.15" stroke-width="2"/>
+  <rect x="620" y="60" width="120" height="120" rx="60" fill="none" stroke="#0693e3" opacity="0.12" stroke-width="2"/>
+  <!-- badge -->
+  <rect x="60" y="50" width="100" height="30" rx="15" fill="#313131" stroke="#555" stroke-width="1"/>
+  <text x="78" y="70" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#aaa">CLOSED</text>
+  <!-- title -->
+  <text x="60" y="140" font-family="Helvetica, Arial, sans-serif" font-size="38" fill="white" font-weight="bold">酪農DX飲み会</text>
+  <line x1="60" y1="165" x2="180" y2="165" stroke="#00d084" stroke-width="3"/>
+  <text x="60" y="210" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#7bdcb5">酪農 × テクノロジー</text>
+  <text x="60" y="245" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#8899bb">酪農のDXに興味がある人限定</text>
+  <text x="60" y="275" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#8899bb">少人数でディープに語ります</text>
+  <!-- details -->
+  <rect x="60" y="310" width="400" height="100" rx="12" fill="white" opacity="0.06"/>
+  <text x="85" y="350" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#00d084">📅</text>
+  <text x="110" y="350" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="white">3/29(日) 19:30〜</text>
+  <text x="85" y="385" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#00d084">📍</text>
+  <text x="110" y="385" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="white">milk（コワーキングスペース）</text>
+  <!-- invite only -->
+  <rect x="530" y="310" width="220" height="100" rx="12" fill="#00d084" opacity="0.1" stroke="#00d084" stroke-width="1" opacity="0.3"/>
+  <text x="570" y="350" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#7bdcb5">🔒 招待制</text>
+  <text x="570" y="380" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5a7a9a">招待コードが必要です</text>
+  <!-- milk badge -->
+  <rect x="620" y="240" width="140" height="40" rx="20" fill="#00d084"/>
+  <text x="650" y="266" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="white" font-weight="bold">milk nomikai</text>
+</svg>
