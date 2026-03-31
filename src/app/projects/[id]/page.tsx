@@ -533,7 +533,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* ===== Bottom Fixed Bar ===== */}
-      <div className="fixed bottom-16 left-0 right-0 p-4 bg-[var(--color-card)]/95 backdrop-blur-sm border-t border-[var(--color-border)] z-30">
+      <div className="fixed bottom-14 left-0 right-0 p-3 bg-[var(--color-card)]/95 backdrop-blur-sm border-t border-[var(--color-border)] z-30">
         <div className="max-w-lg mx-auto flex gap-3">
           <button
             onClick={() => setShowSupportModal(true)}

@@ -417,7 +417,7 @@ export default function TaneDetailClient() {
       )}
 
       {/* 固定ボトムバー */}
-      <div className="fixed bottom-16 left-0 right-0 z-30 bg-[var(--color-card)]/95 backdrop-blur-sm border-t border-[var(--color-border)] p-3">
+      <div className="fixed bottom-14 left-0 right-0 z-30 bg-[var(--color-card)]/95 backdrop-blur-sm border-t border-[var(--color-border)] p-3">
         <div className="max-w-lg mx-auto flex gap-3">
           {dbProfileId === tane.owner_id ? (
             <button
