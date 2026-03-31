@@ -12,3 +12,8 @@ export function formatDate(dateStr: string): string {
   }
   return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}(${days[d.getDay()]})`;
 }
+
+export function linkifyText(text: string): string {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-[var(--color-primary)] underline">$1</a>');
+}

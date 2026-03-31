@@ -154,8 +154,6 @@ async function ensureProfile(authUserId: string, lineProfile: LineProfile): Prom
       avatar_url: lineProfile.pictureUrl ?? null,
       provider: "line",
       line_user_id: lineProfile.userId,
-      interest_tags: [],
-      social_links: {},
     })
     .select("id")
     .single();

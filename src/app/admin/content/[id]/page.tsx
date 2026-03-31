@@ -291,25 +291,6 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
                   </span>
                 </div>
               )}
-              {kind === "project" && data.external_links.length > 0 && (
-                <div>
-                  <span className="text-[var(--color-mute)]">外部リンク:</span>
-                  <ul className="mt-1 space-y-1">
-                    {data.external_links.map((link, i) => (
-                      <li key={i}>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[var(--color-primary)] hover:underline"
-                        >
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
 
             {/* Description */}
@@ -324,37 +305,6 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
 
         {/* Side info */}
         <div className="space-y-4">
-          {kind === "event" && (
-            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
-              <h2 className="text-sm font-bold text-[var(--color-ink)] mb-2">設定</h2>
-              <div className="space-y-2 text-xs text-[var(--color-sub)]">
-                <div className="flex justify-between">
-                  <span>公開設定</span>
-                  <span className="text-[var(--color-ink)]">
-                    {data.is_private ? "非公開" : "公開"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>承認制</span>
-                  <span className="text-[var(--color-ink)]">
-                    {data.requires_approval ? "あり" : "なし"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>決済方法</span>
-                  <span className="text-[var(--color-ink)]">{data.payment_method}</span>
-                </div>
-                {data.deadline && (
-                  <div className="flex justify-between">
-                    <span>締切</span>
-                    <span className="text-[var(--color-ink)]">
-                      {data.deadline.split("T")[0]}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
           {kind === "tane" && (
             <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5">
               <h2 className="text-sm font-bold text-[var(--color-ink)] mb-2">応援状況</h2>
@@ -413,8 +363,6 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
               <tr className="border-b border-[var(--color-border)] bg-[var(--color-soft)]">
                 <th className="text-left px-4 py-3 font-medium text-[var(--color-sub)]">名前</th>
                 <th className="text-left px-4 py-3 font-medium text-[var(--color-sub)]">ステータス</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--color-sub)]">交通手段</th>
-                <th className="text-left px-4 py-3 font-medium text-[var(--color-sub)]">ドリンク</th>
                 <th className="text-right px-4 py-3 font-medium text-[var(--color-sub)]">アクション</th>
               </tr>
             </thead>
@@ -445,12 +393,6 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
                         ? "保留中"
                         : "拒否"}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-[var(--color-sub)]">
-                    {attendee.transport ?? "-"}
-                  </td>
-                  <td className="px-4 py-3 text-[var(--color-sub)]">
-                    {attendee.drink_preference ?? "-"}
                   </td>
                   <td className="px-4 py-3 text-right">
                     {attendee.status === "pending" && (

@@ -144,7 +144,6 @@ export async function createProject(params: {
   description: string;
   cover_image_url?: string;
   tane_id?: string;
-  external_links?: { label: string; url: string; type: string }[];
 }): Promise<string> {
   const { data, error } = await supabase
     .from("projects")
@@ -154,7 +153,6 @@ export async function createProject(params: {
       description: params.description,
       cover_image_url: params.cover_image_url || null,
       tane_id: params.tane_id || null,
-      external_links: params.external_links || [],
       status: "active",
     })
     .select("id")
@@ -233,8 +231,6 @@ export async function upsertProfile(profile: {
       avatar_url: profile.avatar_url ?? null,
       provider: profile.provider,
       line_user_id: profile.line_user_id ?? null,
-      interest_tags: [],
-      social_links: {},
     })
     .select("*")
     .single();
@@ -245,21 +241,12 @@ export async function upsertProfile(profile: {
 // ==========================================
 // 参加
 // ==========================================
-export async function joinEvent(eventId: string, userId: string, options?: {
-  drink_preference?: string;
-  transport?: string;
-  terms_agreed?: boolean;
-  sns_ng?: boolean;
-}): Promise<void> {
+export async function joinEvent(eventId: string, userId: string): Promise<void> {
   const { error } = await supabase
     .from("attendees")
     .insert({
       event_id: eventId,
       user_id: userId,
-      drink_preference: options?.drink_preference ?? null,
-      transport: options?.transport ?? null,
-      terms_agreed: options?.terms_agreed ?? true,
-      sns_ng: options?.sns_ng ?? false,
       status: "pending",
     });
   if (error) throw error;
@@ -308,18 +295,6 @@ export async function hasSupported(targetType: string, targetId: string, userId:
     .eq("target_type", targetType)
     .eq("target_id", targetId);
   return (count ?? 0) > 0;
-}
-
-// ==========================================
-// 交通サービス
-// ==========================================
-export async function fetchTransportServices(): Promise<import("./types").TransportService[]> {
-  const { data, error } = await supabase
-    .from("transport_services")
-    .select("*")
-    .order("service_type");
-  if (error) return [];
-  return (data ?? []) as unknown as import("./types").TransportService[];
 }
 
 // ==========================================

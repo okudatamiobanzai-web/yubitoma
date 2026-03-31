@@ -41,31 +41,6 @@ body {
   font-family: 'Noto Sans JP', 'Helvetica Neue', sans-serif;
 }
 
-/* ダークモード */
-[data-theme="dark"] {
-  --background: #1A1816;
-  --foreground: #E8E4DC;
-  --color-bg: #1A1816;
-  --color-soft: #262320;
-  --color-card: #2A2724;
-  --color-ink: #E8E4DC;
-  --color-sub: #B5AFA5;
-  --color-mute: #7A7468;
-  --color-border: #3A3632;
-  --color-primary: #D4854F;
-  --color-primary-dark: #C5693B;
-  --color-primary-light: #4A3828;
-  --color-accent: #D4854F;
-  --color-accent-soft: #2E2218;
-  --color-success: #6DAF70;
-  --color-warning: #E4A84E;
-  --color-danger: #D4584A;
-  --color-nomikai: #6DAF70;
-  --color-event: #5A9FBF;
-  --color-tane: #DAA520;
-  --color-project: #A78BFA;
-}
-
 /* Grain overlay（しるべ風） */
 .grain::after {
   content: '';

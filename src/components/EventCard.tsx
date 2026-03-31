@@ -2,8 +2,6 @@ import Link from "next/link";
 import { Event } from "@/lib/types";
 import { StatusBadge } from "./StatusBadge";
 import { ProgressBar } from "./ProgressBar";
-import { FlyerTemplate } from "./FlyerTemplate";
-import { Countdown } from "./Countdown";
 import { UserAvatarWithFallback } from "./UserAvatar";
 import { formatDate } from "@/lib/utils";
 
@@ -13,11 +11,11 @@ export function EventCard({ event }: { event: Event }) {
   return (
     <Link href={`/events/${event.id}`} className="block">
       <div className="bg-[var(--color-card)] rounded-2xl shadow-sm border border-[var(--color-border)] overflow-hidden hover:shadow-md transition-shadow">
-        {/* チラシ画像エリア */}
-        {event.flyer_url || event.cover_image_url ? (
+        {/* カバー画像エリア */}
+        {event.cover_image_url ? (
           <div className="h-40 bg-[var(--color-soft)] relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={event.cover_image_url || event.flyer_url || ""} alt="" className="w-full h-full object-cover" />
+            <img src={event.cover_image_url} alt="" className="w-full h-full object-cover" />
             <div className="absolute top-2 left-2">
               <StatusBadge status={event.status} />
             </div>
@@ -29,8 +27,15 @@ export function EventCard({ event }: { event: Event }) {
           </div>
         ) : (
           <div className="h-40 relative overflow-hidden">
-            <div className="absolute inset-0">
-              <FlyerTemplate event={event} />
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(160deg, ${isExperience ? "var(--color-event)" : "var(--color-primary)"} 0%, ${isExperience ? "var(--color-event)" : "var(--color-primary)"}dd 40%, ${isExperience ? "var(--color-event)" : "var(--color-primary)"}99 100%)`,
+              }}
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
+              <div className="text-4xl mb-2">{isExperience ? "🎪" : "🍻"}</div>
+              <h2 className="text-base font-bold leading-tight drop-shadow-sm line-clamp-2">{event.title}</h2>
             </div>
             <div className="absolute top-2 left-2 z-10">
               <StatusBadge status={event.status} />
@@ -54,9 +59,6 @@ export function EventCard({ event }: { event: Event }) {
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-[#ede8f5] text-[var(--color-project)]">
                     🚀 プロジェクト連携
                   </span>
-                )}
-                {event.is_private && (
-                  <span className="text-[11px] bg-[var(--color-ink)] text-white px-1.5 py-0.5 rounded">限定</span>
                 )}
               </div>
               <h3 className="font-bold text-base leading-tight">{event.title}</h3>
@@ -87,21 +89,12 @@ export function EventCard({ event }: { event: Event }) {
             )}
           </div>
 
-          {/* 2次会バッジ */}
-          {event.has_after_party && (
-            <div className="mt-2">
-              <span className="text-[11px] bg-[#f3e8ff] text-[#9b51e0] px-2 py-0.5 rounded-full font-medium">
-                2次会あり
-              </span>
-            </div>
-          )}
-
           {/* プログレスバー */}
           <div className="mt-3">
             <ProgressBar event={event} />
           </div>
 
-          {/* 締め切り + 言い出しっぺ */}
+          {/* 言い出しっぺ */}
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-[var(--color-mute)]">
               <UserAvatarWithFallback
@@ -113,9 +106,6 @@ export function EventCard({ event }: { event: Event }) {
               />
               <span>{event.organizer?.display_name} が言い出しっぺ</span>
             </div>
-            {event.deadline && event.status === "recruiting" && (
-              <Countdown deadline={event.deadline} compact />
-            )}
           </div>
         </div>
       </div>

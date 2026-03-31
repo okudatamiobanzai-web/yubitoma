@@ -17,13 +17,6 @@ const statusConfig: Record<ProjectStatus, { emoji: string; label: string }> = {
   completed: { emoji: "✅", label: "完了" },
 };
 
-const linkTypeIcons: Record<string, string> = {
-  crowdfunding: "💰",
-  website: "🌐",
-  social: "📱",
-  other: "🔗",
-};
-
 const eventStatusLabels: Record<string, { label: string; color: string }> = {
   recruiting: { label: "募集中", color: "var(--color-primary)" },
   confirmed: { label: "開催確定", color: "var(--color-success, #22c55e)" },
@@ -483,36 +476,7 @@ export default function ProjectDetailPage() {
           );
         })()}
 
-        {/* ===== External Links ===== */}
-        {project.external_links.length > 0 && (
-          <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-5">
-            <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
-              🔗 外部リンク
-            </h3>
-            <div className="space-y-2.5">
-              {project.external_links.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 bg-[var(--color-soft)] rounded-xl p-3.5 hover:bg-[var(--color-border)] transition-colors"
-                >
-                  <span className="text-xl">{linkTypeIcons[link.type] || "🔗"}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{link.label}</div>
-                    <div className="text-[10px] text-[var(--color-mute)] truncate">{link.url}</div>
-                  </div>
-                  <svg className="w-4 h-4 text-[var(--color-mute)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ===== ISSUE 6: Comments Section ===== */}
+        {/* ===== Comments Section ===== */}
         <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-5">
           <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
             💬 コメント

@@ -85,10 +85,6 @@ export default function AdminUserDetailPage({
   const color = avatarColor(profile.display_name);
   const initial = profile.display_name.charAt(0);
 
-  const socialEntries = Object.entries(profile.social_links).filter(
-    ([, v]) => v
-  );
-
   return (
     <div>
       <header className="sticky top-0 bg-[var(--color-card)]/90 backdrop-blur-sm z-40 border-b border-[var(--color-border)] px-6 py-4">
@@ -175,47 +171,6 @@ export default function AdminUserDetailPage({
             </div>
           </div>
 
-          {/* SNSリンク */}
-          <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6">
-            <h3 className="text-xs font-medium text-[var(--color-sub)] mb-3 uppercase tracking-wider">
-              SNSリンク
-            </h3>
-            {socialEntries.length > 0 ? (
-              <div className="space-y-2">
-                {socialEntries.map(([platform, handle]) => (
-                  <div key={platform} className="flex items-center gap-2 text-sm">
-                    <span className="text-[var(--color-mute)] capitalize w-20">
-                      {platform}
-                    </span>
-                    <span className="text-[var(--color-ink)]">@{handle}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--color-mute)]">未設定</p>
-            )}
-          </div>
-
-          {/* 興味タグ */}
-          <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-6">
-            <h3 className="text-xs font-medium text-[var(--color-sub)] mb-3 uppercase tracking-wider">
-              興味タグ
-            </h3>
-            {profile.interest_tags.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {profile.interest_tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-block px-2.5 py-1 rounded-full text-xs bg-[var(--color-mute)]/20 text-[var(--color-ink)] border border-[var(--color-border)]"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--color-mute)]">未設定</p>
-            )}
-          </div>
         </div>
 
         {/* 主催イベント */}

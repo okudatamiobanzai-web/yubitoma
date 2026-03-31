@@ -1,15 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import BottomNav from "@/components/bottom-nav";
-import LoadingState from "@/components/loading-state";
+import { BottomNav } from "@/components/BottomNav";
+import { fetchEvents } from "@/lib/data";
+import { Event } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
 
 const AREAS = ["すべて", "中標津", "別海", "釧路", "根室", "弟子屈", "帯広"];
 
 export default function MapPage() {
   const [activeArea, setActiveArea] = useState("すべて");
   const [mapMode, setMapMode] = useState<"map" | "satellite">("map");
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents()
+      .then((all) => setEvents(all.filter((e) => e.status === "recruiting" || e.status === "confirmed")))
+      .catch(() => setEvents([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filteredEvents =
+    activeArea === "すべて"
+      ? events
+      : events.filter(
+          (e) =>
+            e.venue_name?.includes(activeArea) ||
+            e.venue_address?.includes(activeArea)
+        );
 
   return (
     <main className="min-h-screen pb-20 max-w-lg mx-auto">
@@ -23,7 +43,7 @@ export default function MapPage() {
               </svg>
             </Link>
             <div>
-              <h1 className="text-lg font-bold">📍 マップ</h1>
+              <h1 className="text-lg font-bold">&#128205; マップ</h1>
               <p className="text-xs text-[var(--color-mute)]">道東エリアのイベント</p>
             </div>
             <div className="ml-auto flex gap-1">
@@ -65,7 +85,7 @@ export default function MapPage() {
           style={{ height: "50vh" }}
         >
           <div className="text-center text-[var(--color-mute)]">
-            <span className="text-4xl block mb-2">🗺️</span>
+            <span className="text-4xl block mb-2">&#128506;&#65039;</span>
             <p className="text-sm">マップを読み込み中...</p>
           </div>
         </div>
@@ -78,13 +98,38 @@ export default function MapPage() {
           <span className="flex items-center gap-1">
             <span className="w-3 h-3 rounded-full bg-amber-500" /> イベント
           </span>
-          <span className="ml-auto">0件表示</span>
+          <span className="ml-auto">{filteredEvents.length}件表示</span>
         </div>
 
         {/* Event List */}
         <div className="px-4 py-4 space-y-2">
           <h2 className="text-sm font-bold text-[var(--color-foreground)] mb-2">道東のイベント</h2>
-          <LoadingState />
+          {loading ? (
+            <div className="text-center py-8 text-[var(--color-mute)] text-sm">読み込み中...</div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-3xl mb-2">&#128506;&#65039;</p>
+              <p className="text-sm text-[var(--color-sub)]">該当するイベントはありません</p>
+            </div>
+          ) : (
+            filteredEvents.map((event) => (
+              <Link key={event.id} href={`/events/${event.id}`}>
+                <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-4 hover:shadow-sm transition-shadow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">{event.event_type === "nomikai" ? "🍻" : "🎪"}</span>
+                    <h3 className="text-sm font-bold truncate">{event.title}</h3>
+                  </div>
+                  <p className="text-xs text-[var(--color-mute)]">
+                    &#128197; {formatDate(event.date)} {event.start_time && `${event.start_time}〜`}
+                    {event.venue_name && ` &#128205; ${event.venue_name}`}
+                  </p>
+                  <p className="text-xs text-[var(--color-sub)] mt-1">
+                    {event.attendees?.length ?? 0}人が参加
+                  </p>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </div>
       <BottomNav />

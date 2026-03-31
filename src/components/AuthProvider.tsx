@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { initLiff, isLoggedIn, getProfile, login, logout as liffLogout, getFriendship } from "@/lib/liff";
 import { signInWithLine, signOut as supabaseSignOut } from "@/lib/auth";
 
 interface LiffProfile {
@@ -41,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function init() {
       try {
+        const { initLiff, isLoggedIn, getProfile, getFriendship: getLiffFriendship } = await import("@/lib/liff");
         await initLiff();
         if (isLoggedIn()) {
           const profile = await getProfile();
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }
           try {
-            const friendship = await getFriendship();
+            const friendship = await getLiffFriendship();
             if (friendship) {
               setIsFriend(friendship.friendFlag);
             }
@@ -88,13 +88,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init();
   }, []);
 
+  const handleLogin = async () => {
+    const { login: liffLogin } = await import("@/lib/liff");
+    await liffLogin();
+  };
+
   const handleLogout = async () => {
     await supabaseSignOut();
-    liffLogout();
+    const { logout: liffLogout } = await import("@/lib/liff");
+    await liffLogout();
   };
 
   return (
-    <AuthContext.Provider value={{ user, dbProfileId, loading, isFriend, login, logout: handleLogout }}>
+    <AuthContext.Provider value={{ user, dbProfileId, loading, isFriend, login: handleLogin, logout: handleLogout }}>
       {children}
     </AuthContext.Provider>
   );

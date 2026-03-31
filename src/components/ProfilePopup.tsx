@@ -10,9 +10,6 @@ interface ProfilePopupProps {
 }
 
 export function ProfilePopup({ profile, onClose, eventCount }: ProfilePopupProps) {
-  const hasSocial = profile.social_links &&
-    (profile.social_links.instagram || profile.social_links.x || profile.social_links.note || profile.social_links.facebook);
-
   return (
     <>
       {/* オーバーレイ */}
@@ -63,20 +60,6 @@ export function ProfilePopup({ profile, onClose, eventCount }: ProfilePopupProps
               </p>
             )}
 
-            {/* 興味タグ */}
-            {profile.interest_tags && profile.interest_tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {profile.interest_tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] bg-[var(--color-accent-soft)] text-[var(--color-primary)] px-2 py-0.5 rounded-full font-medium"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
             {/* スタッツ */}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div className="bg-[var(--color-soft)] rounded-xl p-3 text-center">
@@ -92,52 +75,6 @@ export function ProfilePopup({ profile, onClose, eventCount }: ProfilePopupProps
                 <div className="text-[10px] text-[var(--color-mute)]">登録年</div>
               </div>
             </div>
-
-            {/* SNSリンク */}
-            {hasSocial && (
-              <div className="flex gap-2 mb-4 flex-wrap">
-                {profile.social_links.instagram && (
-                  <a
-                    href={`https://instagram.com/${profile.social_links.instagram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[11px] bg-gradient-to-r from-[#833AB4]/10 to-[#FD1D1D]/10 text-[#833AB4] px-2.5 py-1 rounded-full font-medium hover:opacity-80 transition-opacity"
-                  >
-                    📸 @{profile.social_links.instagram}
-                  </a>
-                )}
-                {profile.social_links.x && (
-                  <a
-                    href={`https://x.com/${profile.social_links.x}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[11px] bg-[#1DA1F2]/10 text-[#1DA1F2] px-2.5 py-1 rounded-full font-medium hover:opacity-80 transition-opacity"
-                  >
-                    𝕏 @{profile.social_links.x}
-                  </a>
-                )}
-                {profile.social_links.note && (
-                  <a
-                    href={`https://note.com/${profile.social_links.note}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[11px] bg-[#41C9B4]/10 text-[#41C9B4] px-2.5 py-1 rounded-full font-medium hover:opacity-80 transition-opacity"
-                  >
-                    📝 {profile.social_links.note}
-                  </a>
-                )}
-                {profile.social_links.facebook && (
-                  <a
-                    href={`https://facebook.com/${profile.social_links.facebook}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[11px] bg-[#1877F2]/10 text-[#1877F2] px-2.5 py-1 rounded-full font-medium hover:opacity-80 transition-opacity"
-                  >
-                    👤 {profile.social_links.facebook}
-                  </a>
-                )}
-              </div>
-            )}
 
             {/* アクション */}
             <div className="space-y-2">

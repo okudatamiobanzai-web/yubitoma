@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const { data: event } = await supabase
     .from("events")
-    .select("title, description, flyer_url, cover_image_url, date, venue_name, event_type")
+    .select("title, description, cover_image_url, date, venue_name, event_type")
     .eq("id", id)
     .single();
 
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   const emoji = event.event_type === "nomikai" ? "🍻" : "🎪";
   const description = event.description?.substring(0, 120) || `${event.venue_name || ""}で開催`;
-  const imageUrl = event.flyer_url || event.cover_image_url;
+  const imageUrl = event.cover_image_url;
 
   return {
     title: `${event.title} | 指とま`,

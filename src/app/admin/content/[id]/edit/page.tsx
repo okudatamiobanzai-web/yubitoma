@@ -126,7 +126,6 @@ function EventEditForm({ event }: { event: Event }) {
   const [feePerPerson, setFeePerPerson] = useState(String(event.fee_per_person ?? ""));
   const [status, setStatus] = useState(event.status);
   const [coverImageUrl, setCoverImageUrl] = useState(event.cover_image_url ?? null);
-  const [flyerUrl, setFlyerUrl] = useState(event.flyer_url ?? null);
   const [relatedProjectId, setRelatedProjectId] = useState(event.related_project_id ?? "");
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [saving, setSaving] = useState(false);
@@ -152,7 +151,6 @@ function EventEditForm({ event }: { event: Event }) {
         fee_per_person: feePerPerson ? Number(feePerPerson) : null,
         status,
         cover_image_url: coverImageUrl,
-        flyer_url: flyerUrl,
         related_project_id: relatedProjectId || null,
       });
       setMessage("保存しました！");
@@ -168,20 +166,12 @@ function EventEditForm({ event }: { event: Event }) {
     <div className="space-y-4">
       <LabeledInput label="タイトル" value={title} onChange={setTitle} />
       <LabeledTextarea label="説明" value={description} onChange={setDescription} rows={6} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <AdminImageUpload
-          label="カバー画像"
-          currentUrl={coverImageUrl}
-          onUrlChange={setCoverImageUrl}
-          folder={`events/${event.id}`}
-        />
-        <AdminImageUpload
-          label="チラシ画像"
-          currentUrl={flyerUrl}
-          onUrlChange={setFlyerUrl}
-          folder={`events/${event.id}`}
-        />
-      </div>
+      <AdminImageUpload
+        label="カバー画像"
+        currentUrl={coverImageUrl}
+        onUrlChange={setCoverImageUrl}
+        folder={`events/${event.id}`}
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <LabeledInput label="日付" value={date} onChange={setDate} type="date" />
         <LabeledInput label="開始時間" value={startTime} onChange={setStartTime} type="time" />
@@ -321,9 +311,6 @@ function ProjectEditForm({ project }: { project: Project }) {
   const [description, setDescription] = useState(project.description);
   const [status, setStatus] = useState(project.status);
   const [coverImageUrl, setCoverImageUrl] = useState(project.cover_image_url ?? null);
-  const [links, setLinks] = useState(
-    project.external_links.map((l) => ({ ...l }))
-  );
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -336,7 +323,6 @@ function ProjectEditForm({ project }: { project: Project }) {
         description,
         status,
         cover_image_url: coverImageUrl,
-        external_links: links,
       });
       setMessage("保存しました！");
       setTimeout(() => router.push(`/admin/content/${project.id}`), 1500);
@@ -345,20 +331,6 @@ function ProjectEditForm({ project }: { project: Project }) {
     } finally {
       setSaving(false);
     }
-  }
-
-  function addLink() {
-    setLinks([...links, { label: "", url: "", type: "website" as const }]);
-  }
-
-  function updateLink(index: number, field: string, value: string) {
-    const updated = [...links];
-    updated[index] = { ...updated[index], [field]: value };
-    setLinks(updated);
-  }
-
-  function removeLink(index: number) {
-    setLinks(links.filter((_, i) => i !== index));
   }
 
   return (
@@ -382,43 +354,6 @@ function ProjectEditForm({ project }: { project: Project }) {
           { value: "completed", label: statusLabels.completed },
         ]}
       />
-
-      {/* External links editor */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">外部リンク</label>
-        <div className="space-y-3">
-          {links.map((link, i) => (
-            <div key={i} className="flex gap-2 items-start">
-              <input
-                type="text"
-                value={link.label}
-                onChange={(e) => updateLink(i, "label", e.target.value)}
-                placeholder="ラベル"
-                className="flex-1 px-3 py-2 border border-[var(--color-border)] rounded-lg text-sm bg-[var(--color-card)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-primary)]"
-              />
-              <input
-                type="url"
-                value={link.url}
-                onChange={(e) => updateLink(i, "url", e.target.value)}
-                placeholder="URL"
-                className="flex-2 px-3 py-2 border border-[var(--color-border)] rounded-lg text-sm bg-[var(--color-card)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-primary)]"
-              />
-              <button
-                onClick={() => removeLink(i)}
-                className="px-2 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
-              >
-                削除
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={addLink}
-            className="text-sm text-[var(--color-primary)] hover:underline cursor-pointer"
-          >
-            + リンクを追加
-          </button>
-        </div>
-      </div>
 
       <div className="flex gap-3 pt-4">
         <button
