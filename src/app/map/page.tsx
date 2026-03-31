@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { BottomNav } from "@/components/BottomNav";
 import { fetchEvents } from "@/lib/data";
@@ -9,15 +10,22 @@ import { formatDate } from "@/lib/utils";
 
 const AREAS = ["すべて", "中標津", "別海", "釧路", "根室", "弟子屈", "帯広"];
 
+// SSR無効でLeafletを読み込む（window依存のため）
+const LeafletMap = dynamic(() => import("./_LeafletMap"), { ssr: false });
+
 export default function MapPage() {
   const [activeArea, setActiveArea] = useState("すべて");
   const [mapMode, setMapMode] = useState<"map" | "satellite">("map");
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchEvents()
-      .then((all) => setEvents(all.filter((e) => e.status === "recruiting" || e.status === "confirmed")))
+      .then((all) =>
+        setEvents(all.filter((e) => e.status === "recruiting" || e.status === "confirmed"))
+      )
       .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, []);
@@ -31,14 +39,30 @@ export default function MapPage() {
             e.venue_address?.includes(activeArea)
         );
 
+  // マーカークリック → リストの該当カードにスクロール
+  function handleMarkerClick(id: string) {
+    setSelectedEventId(id);
+    const el = document.getElementById(`event-card-${id}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
   return (
     <main className="min-h-screen pb-20 max-w-lg mx-auto">
       <div className="min-h-screen bg-[var(--color-bg)] pb-20">
         {/* Header */}
         <header className="sticky top-0 bg-[var(--color-bg)]/90 backdrop-blur-sm z-[1000] border-b border-[var(--color-border)] px-4 py-3">
           <div className="flex items-center gap-2">
-            <Link href="/" className="text-[var(--color-mute)] hover:text-[var(--color-sub)] cursor-pointer">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <Link
+              href="/"
+              className="text-[var(--color-mute)] hover:text-[var(--color-sub)] cursor-pointer"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
@@ -79,21 +103,32 @@ export default function MapPage() {
           </div>
         </header>
 
-        {/* Map Placeholder */}
+        {/* Map */}
         <div
-          className="mx-4 mt-4 rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-soft)] flex items-center justify-center"
+          className="mx-4 mt-4 rounded-2xl overflow-hidden border border-[var(--color-border)]"
           style={{ height: "50vh" }}
         >
-          <div className="text-center text-[var(--color-mute)]">
-            <span className="text-4xl block mb-2">&#128506;&#65039;</span>
-            <p className="text-sm">マップを読み込み中...</p>
-          </div>
+          {loading ? (
+            <div className="w-full h-full bg-[var(--color-soft)] flex items-center justify-center">
+              <div className="text-center text-[var(--color-mute)]">
+                <span className="text-4xl block mb-2">🗺️</span>
+                <p className="text-sm">読み込み中...</p>
+              </div>
+            </div>
+          ) : (
+            <LeafletMap
+              events={filteredEvents}
+              selectedEventId={selectedEventId}
+              onMarkerClick={handleMarkerClick}
+              mode={mapMode}
+            />
+          )}
         </div>
 
         {/* Legend */}
         <div className="mx-4 mt-2 flex gap-3 text-[10px] text-[var(--color-mute)]">
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full bg-[var(--color-primary)]" /> 飲み会
+            <span className="w-3 h-3 rounded-full bg-[#5B8EED]" /> 飲み会
           </span>
           <span className="flex items-center gap-1">
             <span className="w-3 h-3 rounded-full bg-amber-500" /> イベント
@@ -102,32 +137,54 @@ export default function MapPage() {
         </div>
 
         {/* Event List */}
-        <div className="px-4 py-4 space-y-2">
-          <h2 className="text-sm font-bold text-[var(--color-foreground)] mb-2">道東のイベント</h2>
+        <div ref={listRef} className="px-4 py-4 space-y-2">
+          <h2 className="text-sm font-bold text-[var(--color-foreground)] mb-2">
+            道東のイベント
+          </h2>
           {loading ? (
-            <div className="text-center py-8 text-[var(--color-mute)] text-sm">読み込み中...</div>
+            <div className="text-center py-8 text-[var(--color-mute)] text-sm">
+              読み込み中...
+            </div>
           ) : filteredEvents.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-3xl mb-2">&#128506;&#65039;</p>
+              <p className="text-3xl mb-2">🗺️</p>
               <p className="text-sm text-[var(--color-sub)]">該当するイベントはありません</p>
             </div>
           ) : (
             filteredEvents.map((event) => (
-              <Link key={event.id} href={`/events/${event.id}`}>
-                <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-4 hover:shadow-sm transition-shadow">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{event.event_type === "nomikai" ? "🍻" : "🎪"}</span>
-                    <h3 className="text-sm font-bold truncate">{event.title}</h3>
+              <div
+                key={event.id}
+                id={`event-card-${event.id}`}
+                onClick={() => {
+                  setSelectedEventId(event.id);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                <Link href={`/events/${event.id}`}>
+                  <div
+                    className={`bg-[var(--color-card)] rounded-2xl border p-4 hover:shadow-sm transition-all ${
+                      selectedEventId === event.id
+                        ? "border-[var(--color-primary)] shadow-sm"
+                        : "border-[var(--color-border)]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">
+                        {event.event_type === "nomikai" ? "🍻" : "🎪"}
+                      </span>
+                      <h3 className="text-sm font-bold truncate">{event.title}</h3>
+                    </div>
+                    <p className="text-xs text-[var(--color-mute)]">
+                      📅 {formatDate(event.date)}{" "}
+                      {event.start_time && `${event.start_time}〜`}
+                      {event.venue_name && ` 📍 ${event.venue_name}`}
+                    </p>
+                    <p className="text-xs text-[var(--color-sub)] mt-1">
+                      {event.attendees?.length ?? 0}人が参加
+                    </p>
                   </div>
-                  <p className="text-xs text-[var(--color-mute)]">
-                    &#128197; {formatDate(event.date)} {event.start_time && `${event.start_time}〜`}
-                    {event.venue_name && ` 📍 ${event.venue_name}`}
-                  </p>
-                  <p className="text-xs text-[var(--color-sub)] mt-1">
-                    {event.attendees?.length ?? 0}人が参加
-                  </p>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))
           )}
         </div>
