@@ -506,3 +506,14 @@ export async function markAllNotificationsRead(userId: string): Promise<void> {
     .eq("is_read", false);
   if (error) throw error;
 }
+
+// ==========================================
+// プロジェクトSNS URL管理
+// ==========================================
+export async function updateProjectSnsUrls(projectId: string, snsUrls: string[]): Promise<void> {
+  const { error } = await supabase
+    .from("projects")
+    .update({ sns_urls: snsUrls })
+    .eq("id", projectId);
+  if (error) throw error;
+}

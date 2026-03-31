@@ -85,6 +85,10 @@ export interface Project {
   status: ProjectStatus;
   // 元のタネ
   tane_id: string | null;
+  // SNS投稿URL（管理者が追加）
+  sns_urls?: string[] | null;
+  // 自動生成ハッシュタグ
+  hashtag?: string | null;
   created_at: string;
   updated_at: string;
   // JOINで取得

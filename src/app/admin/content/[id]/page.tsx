@@ -11,6 +11,7 @@ import {
   updateEventStatus,
   updateTaneStatus,
   updateProjectStatus,
+  updateProjectSnsUrls,
 } from "@/lib/data";
 import { CATEGORIES } from "@/lib/types";
 import type { Event, Tane, Project } from "@/lib/types";
@@ -59,6 +60,9 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
   const [profileMap, setProfileMap] = useState<Map<string, string>>(new Map());
   const [projectMap, setProjectMap] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
+  // SNS URL管理
+  const [snsInput, setSnsInput] = useState("");
+  const [snsSaving, setSnsSaving] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -416,6 +420,71 @@ export default function ContentDetailPage({ params }: { params: Promise<{ id: st
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* SNS URL管理（プロジェクトのみ） */}
+      {kind === "project" && (
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-5 mt-6">
+          <h2 className="text-sm font-bold text-[var(--color-ink)] mb-4">
+            📱 SNS投稿URL管理
+            <span className="ml-2 text-xs text-[var(--color-mute)] font-normal">
+              ハッシュタグ: #{`指とま_${data.title.replace(/[\s\-_・]/g, "").slice(0, 15)}`}
+            </span>
+          </h2>
+          {/* 既存URL一覧 */}
+          {(data.sns_urls ?? []).length > 0 && (
+            <div className="space-y-2 mb-4">
+              {(data.sns_urls ?? []).map((url: string, i: number) => (
+                <div key={i} className="flex items-center gap-2 bg-[var(--color-soft)] rounded-lg px-3 py-2">
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="flex-1 text-xs text-[var(--color-primary)] truncate hover:underline">
+                    {url}
+                  </a>
+                  <button
+                    onClick={async () => {
+                      const newUrls = (data.sns_urls ?? []).filter((_: string, idx: number) => idx !== i);
+                      setSnsSaving(true);
+                      try {
+                        await updateProjectSnsUrls(id, newUrls);
+                        setContent({ kind: "project", data: { ...data, sns_urls: newUrls } });
+                      } catch { alert("削除に失敗しました"); }
+                      finally { setSnsSaving(false); }
+                    }}
+                    className="text-red-400 hover:text-red-600 text-xs px-2 py-1 rounded cursor-pointer"
+                  >
+                    削除
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* 追加フォーム */}
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={snsInput}
+              onChange={(e) => setSnsInput(e.target.value)}
+              placeholder="https://x.com/... または https://instagram.com/..."
+              className="flex-1 px-3 py-2 border border-[var(--color-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30"
+            />
+            <button
+              disabled={!snsInput.trim() || snsSaving}
+              onClick={async () => {
+                if (!snsInput.trim()) return;
+                const newUrls = [...(data.sns_urls ?? []), snsInput.trim()];
+                setSnsSaving(true);
+                try {
+                  await updateProjectSnsUrls(id, newUrls);
+                  setContent({ kind: "project", data: { ...data, sns_urls: newUrls } });
+                  setSnsInput("");
+                } catch { alert("追加に失敗しました"); }
+                finally { setSnsSaving(false); }
+              }}
+              className="px-4 py-2 bg-[var(--color-primary)] text-white text-sm rounded-lg disabled:opacity-40 cursor-pointer hover:opacity-90 transition-opacity"
+            >
+              {snsSaving ? "保存中..." : "追加"}
+            </button>
+          </div>
         </div>
       )}
 

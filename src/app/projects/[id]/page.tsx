@@ -185,6 +185,19 @@ export default function ProjectDetailPage() {
 
   const shareUrl = `https://yubitoma.shirubelab.jp/projects/${project.id}`;
 
+  // ハッシュタグ自動生成
+  const hashtag = project.hashtag ?? `#指とま_${project.title.replace(/[\s\-_・]/g, "").slice(0, 15)}`;
+
+  // SNS URLからプラットフォームを判定
+  function detectPlatform(url: string): { label: string; emoji: string; color: string } {
+    if (url.includes("twitter.com") || url.includes("x.com")) return { label: "X (Twitter)", emoji: "𝕏", color: "#000" };
+    if (url.includes("instagram.com")) return { label: "Instagram", emoji: "📸", color: "#E1306C" };
+    if (url.includes("facebook.com")) return { label: "Facebook", emoji: "f", color: "#1877F2" };
+    if (url.includes("line.me")) return { label: "LINE", emoji: "L", color: "#06C755" };
+    if (url.includes("youtube.com") || url.includes("youtu.be")) return { label: "YouTube", emoji: "▶", color: "#FF0000" };
+    return { label: "SNS", emoji: "🔗", color: "#666" };
+  }
+
   return (
     <div className="pb-28">
       <PageHeader
@@ -462,6 +475,73 @@ export default function ProjectDetailPage() {
             </div>
           );
         })()}
+
+        {/* ===== Hashtag Section ===== */}
+        <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-5">
+          <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+            # ハッシュタグ
+          </h3>
+          <p className="text-xs text-[var(--color-mute)] mb-3">
+            SNSでシェアするときはこのタグをつけてください。みんなの投稿が集まります！
+          </p>
+          <button
+            onClick={async () => {
+              const ok = await copyToClipboard(hashtag);
+              if (ok) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-soft)] rounded-xl text-sm font-bold text-[var(--color-project)] hover:bg-[var(--color-border)] transition-colors"
+          >
+            <span>{hashtag}</span>
+            <span className="text-xs text-[var(--color-mute)]">{copied ? "✓ コピー済み" : "コピー"}</span>
+          </button>
+        </div>
+
+        {/* ===== SNS Timeline ===== */}
+        {project.sns_urls && project.sns_urls.length > 0 && (
+          <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-5">
+            <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
+              📱 SNS投稿
+            </h3>
+            <div className="space-y-3">
+              {project.sns_urls.map((url, i) => {
+                const platform = detectPlatform(url);
+                // URLからドメイン+パスの一部を抽出して表示
+                let displayUrl = url;
+                try {
+                  const u = new URL(url);
+                  displayUrl = u.hostname.replace("www.", "") + u.pathname;
+                  if (displayUrl.length > 40) displayUrl = displayUrl.slice(0, 40) + "…";
+                } catch {}
+                return (
+                  <a
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-[var(--color-soft)] rounded-xl hover:bg-[var(--color-border)] transition-colors"
+                  >
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
+                      style={{ backgroundColor: platform.color }}
+                    >
+                      {platform.emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-medium text-[var(--color-sub)]">{platform.label}</div>
+                      <div className="text-xs text-[var(--color-mute)] truncate">{displayUrl}</div>
+                    </div>
+                    <svg className="w-4 h-4 text-[var(--color-mute)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ===== Comments Section ===== */}
         <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] p-5">
