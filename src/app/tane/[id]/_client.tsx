@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
 import { useAuth } from "@/components/AuthProvider";
-import { fetchTaneById, addSupport, notifySupportReceived, fetchSupportComments, createProject, updateTaneStatus, createNotification } from "@/lib/data";
+import { fetchTaneById, addSupport, fetchSupportComments, createProject, updateTaneStatus } from "@/lib/data";
+import { lineNotifyNewSupport, lineNotifyTanePromoted } from "@/lib/notify";
 import { supabase } from "@/lib/supabase";
 import { UserAvatarWithFallback } from "@/components/UserAvatar";
 import type { Support } from "@/lib/types";
@@ -101,8 +102,8 @@ export default function TaneDetailClient() {
       try {
         const comment = selectedPreset || freeText || "応援してる！";
         await addSupport("tane", tane.id, dbProfileId, comment);
-        // オーナーに通知
-        notifySupportReceived("tane", tane.id, tane.title, tane.owner_id, user?.displayName ?? "ユーザー", dbProfileId).catch(() => {});
+        // LINE通知
+        lineNotifyNewSupport("tane", tane.id, user?.displayName ?? "ユーザー", supporterCount + 1, threshold);
       } catch (e) {
         console.error("Support error:", e);
       }
@@ -143,27 +144,8 @@ export default function TaneDetailClient() {
       // Update tane status to promoted
       await updateTaneStatus(tane.id, "promoted");
 
-      // Notify all supporters
-      const { data: supporters } = await supabase
-        .from("supports")
-        .select("user_id")
-        .eq("target_type", "tane")
-        .eq("target_id", tane.id);
-      if (supporters) {
-        for (const s of supporters) {
-          if (s.user_id !== dbProfileId) {
-            createNotification({
-              user_id: s.user_id,
-              type: "tane_promoted",
-              title: "タネがプロジェクトに昇格！",
-              body: `あなたが応援した「${tane.title}」がプロジェクトになりました`,
-              tane_id: tane.id,
-              project_id: projectId,
-              from_user_id: dbProfileId,
-            }).catch(() => {});
-          }
-        }
-      }
+      // LINE通知: 応援者全員に昇格を通知
+      lineNotifyTanePromoted(tane.id, projectId);
 
       router.push(`/projects/${projectId}`);
     } catch (e) {

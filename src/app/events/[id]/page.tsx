@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
-import { fetchEvent, joinEvent, notifyJoinRequest, updateAttendeeStatus } from "@/lib/data";
+import { fetchEvent, joinEvent } from "@/lib/data";
+import { lineNotifyNewParticipant } from "@/lib/notify";
 import { supabase } from "@/lib/supabase";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -46,8 +47,6 @@ export default function EventDetailPage() {
   const [copied, setCopied] = useState(false);
   const [showAllMembers, setShowAllMembers] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-  const [approvedIds, setApprovedIds] = useState<string[]>([]);
-  const [rejectedIds, setRejectedIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -113,37 +112,14 @@ export default function EventDetailPage() {
   const isOrganizer = currentUserId ? event.organizer_id === currentUserId : false;
 
   const myAttendance = currentUserId ? event.attendees?.find((a) => a.user_id === currentUserId) : null;
-  const isApproved = myAttendance?.status === "approved";
-  const isPending = myAttendance?.status === "pending";
-
-  const handleApprove = async (attendeeId: string) => {
-    try {
-      await updateAttendeeStatus(attendeeId, "approved");
-      setApprovedIds((prev) => [...prev, attendeeId]);
-    } catch (e) {
-      console.error("Approve error:", e);
-      alert("承認に失敗しました。もう一度お試しください。");
-    }
-  };
-  const handleReject = async (attendeeId: string) => {
-    try {
-      await updateAttendeeStatus(attendeeId, "rejected");
-      setRejectedIds((prev) => [...prev, attendeeId]);
-    } catch (e) {
-      console.error("Reject error:", e);
-      alert("拒否に失敗しました。もう一度お試しください。");
-    }
-  };
+  const hasJoined = !!myAttendance;
 
   const handleJoinSubmit = async () => {
     if (!currentUserId || submitting) return;
     setSubmitting(true);
     try {
       await joinEvent(event.id, currentUserId);
-      if (event.organizer_id) {
-        const userName = user?.displayName ?? "ユーザー";
-        notifyJoinRequest(event.id, event.title, event.organizer_id, userName, currentUserId).catch(() => {});
-      }
+      lineNotifyNewParticipant(event.id, user?.displayName ?? "ユーザー");
       setJoinComplete(true);
     } catch (e) {
       console.error("Join error:", e);
@@ -400,32 +376,7 @@ export default function EventDetailPage() {
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-[var(--color-mute)]">{a.profile?.display_name}</div>
                     </div>
-                    {approvedIds.includes(a.id) ? (
-                      <span className="text-[10px] bg-green-50 text-[var(--color-success)] px-2 py-0.5 rounded-full font-medium">承認済み</span>
-                    ) : rejectedIds.includes(a.id) ? (
-                      <span className="text-[10px] bg-red-50 text-[var(--color-danger)] px-2 py-0.5 rounded-full font-medium">見送り</span>
-                    ) : (
-                      <span className="text-[10px] bg-yellow-50 text-[var(--color-warning)] px-2 py-0.5 rounded-full font-medium">
-                        承認待ち
-                      </span>
-                    )}
                   </div>
-                  {isOrganizer && !approvedIds.includes(a.id) && !rejectedIds.includes(a.id) && (
-                    <div className="flex gap-2 mt-2 ml-11">
-                      <button
-                        onClick={() => handleApprove(a.id)}
-                        className="flex-1 py-1.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-lg transition-all active:scale-95"
-                      >
-                        承認する
-                      </button>
-                      <button
-                        onClick={() => handleReject(a.id)}
-                        className="flex-1 py-1.5 bg-[var(--color-soft)] text-[var(--color-sub)] text-xs font-medium rounded-lg transition-all active:scale-95"
-                      >
-                        見送る
-                      </button>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
@@ -448,7 +399,7 @@ export default function EventDetailPage() {
       {!isClosed && (
         <div className="fixed bottom-16 left-0 right-0 p-4 bg-[var(--color-card)]/95 backdrop-blur-sm border-t border-[var(--color-border)] z-30">
           <div className="max-w-lg mx-auto">
-            {isApproved && !joinComplete ? (
+            {hasJoined && !joinComplete ? (
               <div className="bg-[var(--color-success)]/10 border border-[var(--color-success)]/20 rounded-2xl p-4 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[var(--color-success)] flex items-center justify-center text-white text-lg">✓</div>
                 <div className="flex-1">
@@ -461,33 +412,20 @@ export default function EventDetailPage() {
                   <span className="text-[10px] bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2 py-1 rounded-full font-bold">主催</span>
                 )}
               </div>
-            ) : isPending ? (
-              <div className="bg-yellow-50 border border-[var(--color-warning)]/20 rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-warning)] flex items-center justify-center text-white text-lg">⏳</div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-[var(--color-warning)]">リクエスト送信済み</div>
-                  <div className="text-[11px] text-[var(--color-mute)]">言い出しっぺの承認をお待ちください</div>
-                </div>
-              </div>
             ) : joinComplete ? (
               <div className="bg-[var(--color-accent-soft)] rounded-2xl p-4 text-center">
                 <div className="text-2xl mb-1">🎉</div>
-                <div className="text-sm font-bold text-[var(--color-primary)]">参加リクエストを送信しました</div>
-                <div className="text-xs text-[var(--color-primary-dark)] mt-1">言い出しっぺの承認をお待ちください</div>
+                <div className="text-sm font-bold text-[var(--color-primary)]">参加しました！</div>
               </div>
             ) : (
               <button
                 onClick={handleJoinSubmit}
                 disabled={submitting}
-                className={`w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all active:scale-[0.98] disabled:opacity-50 ${
-                  isExperience
-                    ? "bg-[var(--color-accent)] shadow-lg shadow-[var(--color-event)]/20"
-                    : "bg-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/20"
-                }`}
+                className="w-full py-3.5 rounded-2xl text-white font-bold text-sm transition-all active:scale-[0.98] disabled:opacity-50 bg-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/20"
               >
-                {submitting ? "送信中..." : isExperience
-                  ? `参加する（${event.fee_per_person?.toLocaleString()}円）`
-                  : "☝️ 参加リクエストを送る"}
+                {submitting ? "送信中..." : event.fee_per_person
+                  ? `参加する（${event.fee_per_person.toLocaleString()}円）`
+                  : "☝️ 参加する"}
               </button>
             )}
           </div>

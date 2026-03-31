@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
-import { fetchProject, addSupport, notifySupportReceived, createNotification, fetchSupportComments } from "@/lib/data";
+import { fetchProject, addSupport, fetchSupportComments } from "@/lib/data";
+import { lineNotifyNewSupport } from "@/lib/notify";
 import { PageHeader } from "@/components/PageHeader";
 import { UserAvatarWithFallback } from "@/components/UserAvatar";
 import { ProjectStatus, Profile, Project, Event, SUPPORT_PRESETS, Support } from "@/lib/types";
@@ -124,10 +125,9 @@ export default function ProjectDetailPage() {
     if (!dbProfileId || !project) return;
     try {
       await addSupport("project", project.id, dbProfileId, supportComment.trim() || undefined);
-      // オーナーに通知を送信
-      if (project.owner_id && project.owner_id !== dbProfileId) {
-        const supporterName = user?.displayName ?? "ユーザー";
-        notifySupportReceived("project", project.id, project.title, project.owner_id, supporterName, dbProfileId).catch(() => {});
+      // LINE通知
+      if (project.owner_id !== dbProfileId) {
+        lineNotifyNewSupport("project", project.id, user?.displayName ?? "ユーザー", (project.supporter_count ?? 0) + 1, 0);
       }
       setSupportSent(true);
       // Reload comments to include new one
@@ -156,15 +156,7 @@ export default function ProjectDetailPage() {
     if (!dbProfileId || !project || joinRequesting) return;
     setJoinRequesting(true);
     try {
-      const requesterName = user?.displayName ?? "ユーザー";
-      await createNotification({
-        user_id: project.owner_id,
-        type: "join_request",
-        title: "コアメンバー参加リクエスト",
-        body: `${requesterName}さんが「${project.title}」のコアメンバーへの参加をリクエストしました`,
-        project_id: project.id,
-        from_user_id: dbProfileId,
-      });
+      lineNotifyNewSupport("project", project.id, user?.displayName ?? "ユーザー", 0, 0);
       setJoinRequested(true);
     } catch (e) {
       console.error("Join request error:", e);
@@ -180,11 +172,6 @@ export default function ProjectDetailPage() {
     setCommentSubmitting(true);
     try {
       await addSupport("project", project.id, dbProfileId, newComment.trim());
-      // Notify owner
-      if (project.owner_id && project.owner_id !== dbProfileId) {
-        const commenterName = user?.displayName ?? "ユーザー";
-        notifySupportReceived("project", project.id, project.title, project.owner_id, commenterName, dbProfileId).catch(() => {});
-      }
       setNewComment("");
       // Reload comments
       fetchSupportComments("project", project.id).then(setComments).catch(() => {});
