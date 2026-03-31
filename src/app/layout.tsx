@@ -16,6 +16,30 @@ export const metadata: Metadata = {
   title: "指とま — この指とまれ！",
   description:
     "「こんな飲み会やりたい」「馬に乗りに行こう」— 言い出しっぺが集まりを作る、道東発のイベントアプリ",
+  openGraph: {
+    title: "指とま — この指とまれ！",
+    description:
+      "「こんな飲み会やりたい」「馬に乗りに行こう」— 言い出しっぺが集まりを作る、道東発のイベントアプリ",
+    url: "https://yubitoma.shirubelab.jp",
+    siteName: "指とま",
+    images: [
+      {
+        url: "https://yubitoma.shirubelab.jp/api/og",
+        width: 1200,
+        height: 630,
+        alt: "指とま — この指とまれ！",
+      },
+    ],
+    type: "website",
+    locale: "ja_JP",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "指とま — この指とまれ！",
+    description:
+      "「こんな飲み会やりたい」「馬に乗りに行こう」— 言い出しっぺが集まりを作る、道東発のイベントアプリ",
+    images: ["https://yubitoma.shirubelab.jp/api/og"],
+  },
 };
 
 export const viewport: Viewport = {
