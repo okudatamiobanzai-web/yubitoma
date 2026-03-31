@@ -107,7 +107,6 @@ export default function EventDetailPage() {
   const currentUserId = dbProfileId;
   const isExperience = event.event_type === "event";
   const approvedAttendees = event.attendees?.filter((a) => a.status === "approved") ?? [];
-  const pendingRequests = event.attendees?.filter((a) => a.status === "pending") ?? [];
   const isClosed = event.status === "closed" || event.status === "cancelled";
   const isOrganizer = currentUserId ? event.organizer_id === currentUserId : false;
 
@@ -355,44 +354,8 @@ export default function EventDetailPage() {
             </button>
           )}
 
-          {pendingRequests.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
-              <div className="text-[10px] text-[var(--color-mute)] font-bold mb-2">✋ 承認待ち（{pendingRequests.length}件）</div>
-              {pendingRequests.map((a) => (
-                <div key={a.id} className="py-3 border-b border-[var(--color-soft)] last:border-0">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => a.profile && setSelectedProfile(a.profile)}
-                      className="cursor-pointer hover:ring-2 hover:ring-[var(--color-primary)] transition-all rounded-full border-2 border-dashed border-[var(--color-border)]"
-                    >
-                      <UserAvatarWithFallback
-                        profile={a.profile}
-                        size="w-8 h-8"
-                        textSize="text-xs"
-                        bgColor="bg-[var(--color-soft)]"
-                        textColor="text-[var(--color-mute)]"
-                      />
-                    </button>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-[var(--color-mute)]">{a.profile?.display_name}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
-        {new Date(event.date) < new Date() && (
-          <div className="mt-4">
-            <Link
-              href={`/events/${event.id}/review`}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-[var(--color-accent-soft)] text-[var(--color-primary)] font-bold text-sm hover:opacity-90 transition-opacity"
-            >
-              📝 振り返りを書く
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* 固定フッター */}
