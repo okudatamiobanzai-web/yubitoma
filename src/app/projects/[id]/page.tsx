@@ -555,7 +555,7 @@ export default function ProjectDetailPage() {
       {showSupportModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => { setShowSupportModal(false); setSupportSent(false); setSupportComment(""); }}>
           <div
-            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto"
+            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6 pb-20 max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             style={{ animation: "slideUp 0.3s ease-out" }}
           >
@@ -616,7 +616,7 @@ export default function ProjectDetailPage() {
       {showShareModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => { setShowShareModal(false); setCopied(false); }}>
           <div
-            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6"
+            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6 pb-20"
             onClick={(e) => e.stopPropagation()}
             style={{ animation: "slideUp 0.3s ease-out" }}
           >

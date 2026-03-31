@@ -43,7 +43,7 @@ export default function MapPage() {
               </svg>
             </Link>
             <div>
-              <h1 className="text-lg font-bold">&#128205; マップ</h1>
+              <h1 className="text-lg font-bold">📍 マップ</h1>
               <p className="text-xs text-[var(--color-mute)]">道東エリアのイベント</p>
             </div>
             <div className="ml-auto flex gap-1">
@@ -121,7 +121,7 @@ export default function MapPage() {
                   </div>
                   <p className="text-xs text-[var(--color-mute)]">
                     &#128197; {formatDate(event.date)} {event.start_time && `${event.start_time}〜`}
-                    {event.venue_name && ` &#128205; ${event.venue_name}`}
+                    {event.venue_name && ` 📍 ${event.venue_name}`}
                   </p>
                   <p className="text-xs text-[var(--color-sub)] mt-1">
                     {event.attendees?.length ?? 0}人が参加

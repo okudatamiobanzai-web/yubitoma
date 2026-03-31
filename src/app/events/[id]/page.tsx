@@ -442,7 +442,7 @@ export default function EventDetailPage() {
       {showShare && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => { setShowShare(false); setCopied(false); }}>
           <div
-            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6"
+            className="bg-[var(--color-card)] w-full max-w-lg mx-auto rounded-t-3xl p-6 pb-20"
             onClick={(e) => e.stopPropagation()}
             style={{ animation: "slideUp 0.3s ease-out" }}
           >

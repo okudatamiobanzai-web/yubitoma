@@ -296,7 +296,7 @@ export default function TaneDetailClient() {
       {showSupportModal && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={() => setShowSupportModal(false)}>
           <div
-            className="w-full max-w-lg bg-[var(--color-card)] rounded-t-3xl p-6 animate-[slideUp_0.3s_ease-out]"
+            className="w-full max-w-lg bg-[var(--color-card)] rounded-t-3xl p-6 pb-20 animate-[slideUp_0.3s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             {supportSent ? (
@@ -368,7 +368,7 @@ export default function TaneDetailClient() {
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={() => setShowShareModal(false)}>
           <div
-            className="w-full max-w-lg bg-[var(--color-card)] rounded-t-3xl p-6 animate-[slideUp_0.3s_ease-out]"
+            className="w-full max-w-lg bg-[var(--color-card)] rounded-t-3xl p-6 pb-20 animate-[slideUp_0.3s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
