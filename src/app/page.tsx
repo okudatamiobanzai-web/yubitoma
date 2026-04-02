@@ -26,35 +26,37 @@ function TaneCard({ tane }: { tane: Tane }) {
   );
   return (
     <Link href={`/tane/${tane.id}`} className="block">
-      <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] overflow-hidden hover:shadow-sm transition-shadow">
-        {tane.cover_image_url && (
-          <div className="w-full h-32 overflow-hidden">
+      <div className="bg-[var(--color-card)] rounded-2xl shadow-sm border border-[var(--color-border)] overflow-hidden hover:shadow-md transition-shadow">
+        {/* ヒーローエリア（EventCardと同じh-40） */}
+        {tane.cover_image_url ? (
+          <div className="h-40 overflow-hidden">
             <img src={tane.cover_image_url} alt={tane.title} className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div className="h-40 relative overflow-hidden">
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(160deg, var(--color-tane) 0%, var(--color-tane)dd 40%, var(--color-tane)99 100%)" }}
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
+              <div className="text-4xl mb-2">🌱</div>
+              <h2 className="text-base font-bold leading-tight drop-shadow-sm line-clamp-2">{tane.title}</h2>
+            </div>
           </div>
         )}
         <div className="p-4">
-        <div className="flex items-start gap-2 mb-2">
-          <span className="text-xl">🌱</span>
-          <h3 className="text-sm font-bold leading-snug">{tane.title}</h3>
-        </div>
-        <p className="text-xs text-[var(--color-sub)] line-clamp-2 mb-3">
-          {tane.description}
-        </p>
-        <div className="w-full bg-[var(--color-soft)] rounded-full h-1.5 mb-2">
-          <div
-            className="h-1.5 rounded-full transition-all"
-            style={{
-              width: `${progress}%`,
-              backgroundColor: "var(--color-tane)",
-            }}
-          />
-        </div>
-        <p className="text-xs text-[var(--color-mute)]">
-          📣 {tane.supporter_count ?? 0}人が応援
-          <span className="text-[var(--color-mute)] ml-1">
-            / {tane.promotion_threshold}人で昇格
-          </span>
-        </p>
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-[11px] px-2 py-0.5 rounded-full font-medium bg-[var(--color-tane)]/10 text-[var(--color-tane)]">🌱タネ</span>
+          </div>
+          <h3 className="font-bold text-base leading-tight mb-2">{tane.title}</h3>
+          <p className="text-xs text-[var(--color-sub)] line-clamp-2 mb-3">{tane.description}</p>
+          <div className="w-full bg-[var(--color-soft)] rounded-full h-1.5 mb-2">
+            <div className="h-1.5 rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: "var(--color-tane)" }} />
+          </div>
+          <p className="text-xs text-[var(--color-mute)]">
+            📣 {tane.supporter_count ?? 0}人が応援
+            <span className="ml-1">/ {tane.promotion_threshold}人で昇格</span>
+          </p>
         </div>
       </div>
     </Link>
@@ -65,40 +67,41 @@ function ProjectCard({ project }: { project: Project }) {
   const statusLabels: Record<string, { label: string; color: string }> = {
     planning: { label: "企画中", color: "var(--color-mute)" },
     active: { label: "活動中", color: "var(--color-project)" },
-    paused: { label: "休止中", color: "var(--color-warning, #f59e0b)" },
+    paused: { label: "休止中", color: "#f59e0b" },
     completed: { label: "完了", color: "var(--color-sub)" },
   };
   const st = statusLabels[project.status] ?? statusLabels.planning;
 
   return (
     <Link href={`/projects/${project.id}`} className="block">
-      <div className="bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] overflow-hidden hover:shadow-sm transition-shadow">
-        {project.cover_image_url && (
-          <div className="w-full h-32 overflow-hidden">
+      <div className="bg-[var(--color-card)] rounded-2xl shadow-sm border border-[var(--color-border)] overflow-hidden hover:shadow-md transition-shadow">
+        {/* ヒーローエリア（EventCardと同じh-40） */}
+        {project.cover_image_url ? (
+          <div className="h-40 overflow-hidden">
             <img src={project.cover_image_url} alt={project.title} className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div className="h-40 relative overflow-hidden">
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(160deg, var(--color-project) 0%, var(--color-project)dd 40%, var(--color-project)99 100%)" }}
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
+              <div className="text-4xl mb-2">🚀</div>
+              <h2 className="text-base font-bold leading-tight drop-shadow-sm line-clamp-2">{project.title}</h2>
+            </div>
           </div>
         )}
         <div className="p-4">
-        <div className="flex items-start gap-2 mb-2">
-          <span className="text-xl">🚀</span>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <h3 className="text-sm font-bold leading-snug truncate">{project.title}</h3>
-              <span
-                className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-full text-white"
-                style={{ backgroundColor: st.color }}
-              >
-                {st.label}
-              </span>
-            </div>
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-[11px] px-2 py-0.5 rounded-full font-medium bg-[var(--color-project)]/10 text-[var(--color-project)]">🚀プロジェクト</span>
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full text-white" style={{ backgroundColor: st.color }}>{st.label}</span>
           </div>
-        </div>
-        <p className="text-xs text-[var(--color-sub)] line-clamp-2 mb-3">
-          {project.description}
-        </p>
-        <p className="text-xs text-[var(--color-mute)]">
-          👥 コア{project.core_members?.length ?? 0}人 / 📣 応援{project.supporter_count ?? 0}人
-        </p>
+          <h3 className="font-bold text-base leading-tight mb-2">{project.title}</h3>
+          <p className="text-xs text-[var(--color-sub)] line-clamp-2 mb-3">{project.description}</p>
+          <p className="text-xs text-[var(--color-mute)]">
+            👥 コア{project.core_members?.length ?? 0}人 / 📣 応援{project.supporter_count ?? 0}人
+          </p>
         </div>
       </div>
     </Link>
