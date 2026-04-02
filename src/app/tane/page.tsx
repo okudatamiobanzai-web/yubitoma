@@ -16,13 +16,17 @@ function TaneCard({ tane }: { tane: Tane }) {
   return (
     <Link href={`/tane/${tane.id}`} className="block">
       <div className="bg-[var(--color-card)] rounded-2xl shadow-sm border border-[var(--color-border)] overflow-hidden hover:shadow-md transition-shadow">
-        {tane.cover_image_url && (
-          <div className="w-full h-36 overflow-hidden">
-            <img
-              src={tane.cover_image_url}
-              alt={tane.title}
-              className="w-full h-full object-cover"
-            />
+        {tane.cover_image_url ? (
+          <div className="h-40 overflow-hidden">
+            <img src={tane.cover_image_url} alt={tane.title} className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div className="h-40 relative overflow-hidden">
+            <div className="absolute inset-0" style={{ background: "var(--color-tane)", opacity: 0.85 }} />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
+              <div className="text-4xl mb-2">🌱</div>
+              <h2 className="text-base font-bold leading-tight drop-shadow-sm line-clamp-2">{tane.title}</h2>
+            </div>
           </div>
         )}
         <div className="p-4">

@@ -247,7 +247,7 @@ export async function joinEvent(eventId: string, userId: string): Promise<void> 
     .insert({
       event_id: eventId,
       user_id: userId,
-      status: "pending",
+      status: "approved",
     });
   if (error) throw error;
 }
